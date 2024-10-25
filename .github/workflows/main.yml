@@ -1,0 +1,30 @@
+name: main
+
+on:
+  schedule:
+    - cron: '*/5 * * * *' # Runs every 5 minutes, as GitHub Actions does not support every minute schedules.
+
+jobs:
+  update-file:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repo
+      uses: actions/checkout@v2
+
+    - name: Setup Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.x'
+
+    - name: Create or Update Date File
+      run: |
+        echo "Last Updated: $(date)" > last_update.txt
+
+    - name: Commit and Push if changed
+      run: |
+        git config --global user.name 'likhonofficial'
+        git config --global user.email 'admin@likhonsheikh.com'
+        git add last_update.txt
+        git commit -m "Update date file" || exit 0 # This command exits with 0 if there's nothing to commit
+        git push
